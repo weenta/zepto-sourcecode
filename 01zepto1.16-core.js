@@ -168,8 +168,9 @@ var Zepto = (function () {
             }
 
             // If it's a CSS selector, use it to select nodes.
-            // 如果是css selector 就用来选择dom节点
+            // 如果是css selector 就使用`zepto.qsa`来选择dom节点
             else {
+                // document=window.document 开头已定义
                 dom = zepto.qsa(document, selector)
             }    
         }
@@ -190,11 +191,50 @@ var Zepto = (function () {
             // nodes from there
             else if (context !== undefined) return $(context).find(selector)
             // And last but no least, if it's a CSS selector, use it to select nodes.
+
             else dom = zepto.qsa(document, selector)
         }
         // create a new Zepto collection from the nodes found
         return zepto.Z(dom, selector)
     }
+
+    // `$.zepto.qsa` is Zepto's CSS selector implementation which
+    // uses `document.querySelectorAll` and optimizes for some special cases, like `#id`.
+    // This method can be overriden in plugins.
+    // `zepto.qsa`通过使用`document.querySelectorAll`来获取dom节点;并且对例如`#id`的情况做了优化
+    zepto.qsa = function (element, selector) {
+        var found,
+            // 通过id
+            maybeID = selector[0] == '#',
+            // 通过className
+            maybeClass = !maybeID && selector[0] == '.',
+            // 通过标签名字
+            // $('.') -> nameOnly = ''
+            // $('span') -> nameOnly = 'span'
+            nameOnly = maybeID || maybeClass ? selector.slice(1) : selector, // Ensure that a 1 char tag name still gets checked
+            // simpleSelectorRE = /^[\w-]*$/,
+            isSimple = simpleSelectorRE.test(nameOnly)
+            // function isDocument(obj) { return obj != null && obj.nodeType == obj.DOCUMENT_NODE }
+            // element == window.document -> true 其他false; 
+
+            // 如果element == window.document 且 isSimple 为true 且以'#'开头
+        return (isDocument(element) && isSimple && maybeID) ?
+             // 如果能element.getElementById(nameOnly)能找到对应id 就放入数组中 否则返回空数组
+            ((found = element.getElementById(nameOnly)) ? [found] : []) :
+
+            // 如果element不为元素节点且不为document 返回[]
+            (element.nodeType !== 1 && element.nodeType !== 9) ? [] :
+                slice.call(
+                    isSimple && !maybeID ?
+                        maybeClass ? element.getElementsByClassName(nameOnly) : // If it's simple, it could be a class
+                            element.getElementsByTagName(selector) : // Or a tag
+                        element.querySelectorAll(selector) // Or it's not simple, and we need to query all
+                )
+
+// 如果不是#id              maybeClass为true;                                       maybeClass为false                        
+//isSimple && !maybeID ?  ( maybeClass ? element.getElementsByClassName(nameOnly) : element.getElementsByTagName(selector) ) :  element.querySelectorAll(selector) 
+    }
+
 
     // `$.zepto.fragment` takes a html string and an optional tag name
     // to generate DOM nodes nodes from the given html string.
@@ -266,25 +306,7 @@ var Zepto = (function () {
         return target
     }
 
-    // `$.zepto.qsa` is Zepto's CSS selector implementation which
-    // uses `document.querySelectorAll` and optimizes for some special cases, like `#id`.
-    // This method can be overriden in plugins.
-    zepto.qsa = function (element, selector) {
-        var found,
-            maybeID = selector[0] == '#',
-            maybeClass = !maybeID && selector[0] == '.',
-            nameOnly = maybeID || maybeClass ? selector.slice(1) : selector, // Ensure that a 1 char tag name still gets checked
-            isSimple = simpleSelectorRE.test(nameOnly)
-        return (isDocument(element) && isSimple && maybeID) ?
-            ((found = element.getElementById(nameOnly)) ? [found] : []) :
-            (element.nodeType !== 1 && element.nodeType !== 9) ? [] :
-                slice.call(
-                    isSimple && !maybeID ?
-                        maybeClass ? element.getElementsByClassName(nameOnly) : // If it's simple, it could be a class
-                            element.getElementsByTagName(selector) : // Or a tag
-                        element.querySelectorAll(selector) // Or it's not simple, and we need to query all
-                )
-    }
+
 
     function filtered(nodes, selector) {
         return selector == null ? $(nodes) : $(nodes).filter(selector)
