@@ -8,23 +8,25 @@
 			color: blue;
 		}
 	</style>
+
+	<!-- 核心版 -->
+	<script type="text/javascript" src='01zepto1.16-core.js'></script>
 </head>
 <body>
-	<p id="p1">测试</p>
+	<p id="p1">span</p>
 	<div>
 		<span>test1</span>
 		<span>test2</span>
 		<span>test3</span>
 	</div>
-
-	<script src="https://cdn.bootcss.com/zepto/1.1.6/zepto.js"></script>
+	<h2>item-list</h2>
+	<ul>
+		<li>item1</li>
+		<li>item2</li>
+	</ul>
 	<script type="text/javascript">
-		Zepto(function($){
-			var $p1 = $('#p1')
-			var $span = $('span')
-			console.log($p1)
-			console.log($span)
-		})
+		var span = $('span')
+		console.log(span)
 	</script>
 </body>
 </html>
