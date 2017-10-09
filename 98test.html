@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>zepto-sourcecode</title>
+	<style type="text/css">
+		.blue {
+			color: blue;
+		}
+	</style>
+</head>
+<body>
+	<p id="p1">测试</p>
+	<div>
+		<span>test1</span>
+		<span>test2</span>
+		<span>test3</span>
+	</div>
+
+	<script src="https://cdn.bootcss.com/zepto/1.1.6/zepto.js"></script>
+	<script type="text/javascript">
+		Zepto(function($){
+			var $p1 = $('#p1')
+			var $span = $('span')
+			console.log($p1)
+			console.log($span)
+		})
+	</script>
+</body>
+</html>
