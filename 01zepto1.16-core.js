@@ -163,6 +163,7 @@ var Zepto = (function () {
             }
             // If there's a context, create a collection on that context first, and select
             // nodes from there
+            // 如果参数中给出context 调用find方法
             else if (context !== undefined) {
                 return $(context).find(selector)
             }
@@ -199,83 +200,12 @@ var Zepto = (function () {
         return zepto.Z(dom, selector)
     }
 
-    // `$.zepto.qsa` is Zepto's CSS selector implementation which
-    // uses `document.querySelectorAll` and optimizes for some special cases, like `#id`.
-    // This method can be overriden in plugins.
-    // `zepto.qsa获取dom节点;并且对例如`#id` `.className`的情况做了优化
-    zepto.qsa = function (element, selector) {
-        var found,
-            // 通过`$(#id)` true/false
-            maybeID = selector[0] == '#',
-            // 通过`$('.className')` true/false
-            maybeClass = !maybeID && selector[0] == '.',
-            // 获取名字
-            // $('.') -> nameOnly = ''
-            // $('span') -> nameOnly = 'span'
-            // $('.calssName') -> nameOnly = 'className'
-            nameOnly = maybeID || maybeClass ? selector.slice(1) : selector, // Ensure that a 1 char tag name still gets checked
-            // simpleSelectorRE = /^[\w-]*$/, true/false
-            isSimple = simpleSelectorRE.test(nameOnly)
-            // function isDocument(obj) { return obj != null && obj.nodeType == obj.DOCUMENT_NODE }
-            // element == window.document -> true 其他false; 
-
-
-        // 重写判断-解构源码中多层嵌套的三元运算 添加注释
-        // cls 类型为`HTMLCollection`
-        var arr = [], cls
-        // 如果element == window.document 且 isSimple 为true 且以'#'开头
-        if(isDocument(element) && isSimple && maybeID){
-            found = element.getElementById(nameOnly)
-            if(found){
-                arr = [found]
-            }
-        }else {
-            // 元素节点nodeType == 1 window.document.nodeType == 9
-            if(element.nodeType !== 1 && element.nodeType !== 9){
-                console.log('element.nodeType = ' + element.nodeType)
-                arr = []
-            }else {
-                // 如果不是$('#id')
-                if(isSimple && !maybeID){
-                    // 如果是$('.item')
-                    if(maybeClass){
-                        cls =  element.getElementsByClassName(nameOnly)
-                    }else {
-                        // 否则以标签名称 $('span')的形式
-                        cls = element.getElementsByTagName(nameOnly)
-                    }
-                }else {
-                    // 否则
-                    // 什么情况下会用到??
-                    console.log('使用querySelectorAll的情况')
-                    cls = element.querySelectorAll(selector)
-                }
-                arr = slice.call(cls)
-            }
-            return arr
-        }
-
-        // 源码方式    
-            // return (isDocument(element) && isSimple && maybeID) ?
-            //      // 如果能element.getElementById(nameOnly)能找到对应id 就放入数组中 否则返回空数组
-            //     ((found = element.getElementById(nameOnly)) ? [found] : []) :
-
-            //     // 如果element不为元素节点且不为document 返回[]
-            //     (element.nodeType !== 1 && element.nodeType !== 9) ? [] :
-            //         slice.call(
-            //             isSimple && !maybeID ?
-            //                 maybeClass ? element.getElementsByClassName(nameOnly) : // If it's simple, it could be a class
-            //                     element.getElementsByTagName(selector) : // Or a tag
-            //                 element.querySelectorAll(selector) // Or it's not simple, and we need to query all
-            //         )
-    }
-
-
     // `$.zepto.fragment` takes a html string and an optional tag name
     // to generate DOM nodes nodes from the given html string.
     // The generated DOM nodes are returned as an array.
     // This function can be overriden in plugins for example to make
     // it compatible with browsers that don't support the DOM fully.
+    // zepto.fragment 接收html片段和一个可选的标签名称来穿件DOM节点 创建的DOM以数组的形式返回
     zepto.fragment = function (html, name, properties) {
         var dom, nodes, container
 
@@ -304,6 +234,83 @@ var Zepto = (function () {
 
         return dom
     }
+
+    // `$.zepto.qsa` is Zepto's CSS selector implementation which
+    // uses `document.querySelectorAll` and optimizes for some special cases, like `#id`.
+    // This method can be overriden in plugins.
+    // `zepto.qsa获取dom节点;并且对例如`#id` `.className`的情况做了优化
+    // 重写节点选择判断
+    zepto.qsa = function (element, selector) {
+        var found,
+            // 通过`$(#id)` true/false
+            maybeID = selector[0] == '#',
+            // 通过`$('.className')` true/false
+            maybeClass = !maybeID && selector[0] == '.',
+            // 获取名字
+            // $('.') -> nameOnly = ''
+            // $('span') -> nameOnly = 'span'
+            // $('.calssName') -> nameOnly = 'className'
+            nameOnly = maybeID || maybeClass ? selector.slice(1) : selector, // Ensure that a 1 char tag name still gets checked
+            // simpleSelectorRE = /^[\w-]*$/, true/false
+            isSimple = simpleSelectorRE.test(nameOnly)
+            // function isDocument(obj) { return obj != null && obj.nodeType == obj.DOCUMENT_NODE }
+            // element == window.document -> true 其他false; 
+
+
+        // 重写判断-解构源码中多层嵌套的三元运算 添加注释
+        // cls 类型为`HTMLCollection`
+        var arr = [], cls
+        // 如果element == window.document 且 isSimple 为true 且以'#'开头
+        if(isDocument(element) && isSimple && maybeID){
+            found = element.getElementById(nameOnly)
+            if(found){
+                arr = [found]
+            }
+        }else {
+            // 元素节点nodeType == 1/ window.document.nodeType == 9
+            if(element.nodeType !== 1 && element.nodeType !== 9){
+                // 什么情况下??
+                console.log('element.nodeType = ' + element.nodeType)
+                arr = []
+            }else {
+                // 如果不是$('#id')的形式
+                if(isSimple && !maybeID){
+                    // 如果是$('.item')的形式
+                    if(maybeClass){
+                        cls =  element.getElementsByClassName(nameOnly)
+                    }else {
+                        // 否则以标签名称 $('span')的形式
+                        cls = element.getElementsByTagName(nameOnly)
+                    }
+                }else {
+                    // 否则
+                    // 什么情况下会用到??
+                    console.log('使用querySelectorAll的情况')
+                    cls = element.querySelectorAll(selector)
+                }
+                // 将结果转化为数组
+                arr = slice.call(cls)
+            }
+            return arr
+        }
+
+        // 源码方式    
+            // return (isDocument(element) && isSimple && maybeID) ?
+            //      // 如果能element.getElementById(nameOnly)能找到对应id 就放入数组中 否则返回空数组
+            //     ((found = element.getElementById(nameOnly)) ? [found] : []) :
+
+            //     // 如果element不为元素节点且不为document 返回[]
+            //     (element.nodeType !== 1 && element.nodeType !== 9) ? [] :
+            //         slice.call(
+            //             isSimple && !maybeID ?
+            //                 maybeClass ? element.getElementsByClassName(nameOnly) : // If it's simple, it could be a class
+            //                     element.getElementsByTagName(selector) : // Or a tag
+            //                 element.querySelectorAll(selector) // Or it's not simple, and we need to query all
+            //         )
+    }
+
+
+    
 
 
 
