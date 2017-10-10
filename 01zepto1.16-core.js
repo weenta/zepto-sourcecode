@@ -194,6 +194,7 @@ var Zepto = (function () {
 
             else dom = zepto.qsa(document, selector)
         }
+    
         // create a new Zepto collection from the nodes found
         return zepto.Z(dom, selector)
     }
@@ -254,20 +255,19 @@ var Zepto = (function () {
             return arr
         }
 
-    // 源码方式    
-        // return (isDocument(element) && isSimple && maybeID) ?
-        //      // 如果能element.getElementById(nameOnly)能找到对应id 就放入数组中 否则返回空数组
-        //     ((found = element.getElementById(nameOnly)) ? [found] : []) :
+        // 源码方式    
+            // return (isDocument(element) && isSimple && maybeID) ?
+            //      // 如果能element.getElementById(nameOnly)能找到对应id 就放入数组中 否则返回空数组
+            //     ((found = element.getElementById(nameOnly)) ? [found] : []) :
 
-        //     // 如果element不为元素节点且不为document 返回[]
-        //     (element.nodeType !== 1 && element.nodeType !== 9) ? [] :
-        //         slice.call(
-        //             isSimple && !maybeID ?
-        //                 maybeClass ? element.getElementsByClassName(nameOnly) : // If it's simple, it could be a class
-        //                     element.getElementsByTagName(selector) : // Or a tag
-        //                 element.querySelectorAll(selector) // Or it's not simple, and we need to query all
-        //         )
-       
+            //     // 如果element不为元素节点且不为document 返回[]
+            //     (element.nodeType !== 1 && element.nodeType !== 9) ? [] :
+            //         slice.call(
+            //             isSimple && !maybeID ?
+            //                 maybeClass ? element.getElementsByClassName(nameOnly) : // If it's simple, it could be a class
+            //                     element.getElementsByTagName(selector) : // Or a tag
+            //                 element.querySelectorAll(selector) // Or it's not simple, and we need to query all
+            //         )
     }
 
 
