@@ -201,38 +201,73 @@ var Zepto = (function () {
     // `$.zepto.qsa` is Zepto's CSS selector implementation which
     // uses `document.querySelectorAll` and optimizes for some special cases, like `#id`.
     // This method can be overriden in plugins.
-    // `zepto.qsa`通过使用`document.querySelectorAll`来获取dom节点;并且对例如`#id`的情况做了优化
+    // `zepto.qsa获取dom节点;并且对例如`#id` `.className`的情况做了优化
     zepto.qsa = function (element, selector) {
         var found,
-            // 通过id
+            // 通过`$(#id)` true/false
             maybeID = selector[0] == '#',
-            // 通过className
+            // 通过`$('.className')` true/false
             maybeClass = !maybeID && selector[0] == '.',
-            // 通过标签名字
+            // 获取名字
             // $('.') -> nameOnly = ''
             // $('span') -> nameOnly = 'span'
+            // $('.calssName') -> nameOnly = 'className'
             nameOnly = maybeID || maybeClass ? selector.slice(1) : selector, // Ensure that a 1 char tag name still gets checked
-            // simpleSelectorRE = /^[\w-]*$/,
+            // simpleSelectorRE = /^[\w-]*$/, true/false
             isSimple = simpleSelectorRE.test(nameOnly)
             // function isDocument(obj) { return obj != null && obj.nodeType == obj.DOCUMENT_NODE }
             // element == window.document -> true 其他false; 
 
-            // 如果element == window.document 且 isSimple 为true 且以'#'开头
-        return (isDocument(element) && isSimple && maybeID) ?
-             // 如果能element.getElementById(nameOnly)能找到对应id 就放入数组中 否则返回空数组
-            ((found = element.getElementById(nameOnly)) ? [found] : []) :
 
-            // 如果element不为元素节点且不为document 返回[]
-            (element.nodeType !== 1 && element.nodeType !== 9) ? [] :
-                slice.call(
-                    isSimple && !maybeID ?
-                        maybeClass ? element.getElementsByClassName(nameOnly) : // If it's simple, it could be a class
-                            element.getElementsByTagName(selector) : // Or a tag
-                        element.querySelectorAll(selector) // Or it's not simple, and we need to query all
-                )
+        // 重写判断-解构源码中多层嵌套的三元运算 添加注释
+        // cls 类型为`HTMLCollection`
+        var arr = [], cls
+        // 如果element == window.document 且 isSimple 为true 且以'#'开头
+        if(isDocument(element) && isSimple && maybeID){
+            found = element.getElementById(nameOnly)
+            if(found){
+                arr = [found]
+            }
+        }else {
+            // 元素节点nodeType == 1 window.document.nodeType == 9
+            if(element.nodeType !== 1 && element.nodeType !== 9){
+                console.log('element.nodeType = ' + element.nodeType)
+                arr = []
+            }else {
+                // 如果不是$('#id')
+                if(isSimple && !maybeID){
+                    // 如果是$('.item')
+                    if(maybeClass){
+                        cls =  element.getElementsByClassName(nameOnly)
+                    }else {
+                        // 否则以标签名称 $('span')的形式
+                        cls = element.getElementsByTagName(nameOnly)
+                    }
+                }else {
+                    // 否则
+                    // 什么情况下会用到??
+                    console.log('使用querySelectorAll的情况')
+                    cls = element.querySelectorAll(selector)
+                }
+                arr = slice.call(cls)
+            }
+            return arr
+        }
 
-// 如果不是#id              maybeClass为true;                                       maybeClass为false                        
-//isSimple && !maybeID ?  ( maybeClass ? element.getElementsByClassName(nameOnly) : element.getElementsByTagName(selector) ) :  element.querySelectorAll(selector) 
+    // 源码方式    
+        // return (isDocument(element) && isSimple && maybeID) ?
+        //      // 如果能element.getElementById(nameOnly)能找到对应id 就放入数组中 否则返回空数组
+        //     ((found = element.getElementById(nameOnly)) ? [found] : []) :
+
+        //     // 如果element不为元素节点且不为document 返回[]
+        //     (element.nodeType !== 1 && element.nodeType !== 9) ? [] :
+        //         slice.call(
+        //             isSimple && !maybeID ?
+        //                 maybeClass ? element.getElementsByClassName(nameOnly) : // If it's simple, it could be a class
+        //                     element.getElementsByTagName(selector) : // Or a tag
+        //                 element.querySelectorAll(selector) // Or it's not simple, and we need to query all
+        //         )
+       
     }
 
 

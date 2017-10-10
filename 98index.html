@@ -4,6 +4,9 @@
 	<meta charset="UTF-8">
 	<title>zepto-sourcecode</title>
 	<style type="text/css">
+		h1 {font-size: 22px;}
+		h2 {font-size: 18px;}
+
 		.blue {
 			color: blue;
 		}
@@ -11,7 +14,7 @@
 
 </head>
 <body>
-	<p id="title">spanList</p>
+	<h1 id="title">Zepto.js-sourceCode</h1>
 	<div class='wrapper'>
 		<span>test1</span>
 		<span>test2</span>
@@ -19,17 +22,17 @@
 	</div>
 	<h2>item-list</h2>
 	<ul>
-		<li>item1</li>
-		<li>item2</li>
+		<li class="item">item1</li>
+		<li class="item">item2</li>
+		<li class="item">item3</li>
 	</ul>
 
 <script type="text/javascript" src='01zepto1.16-core.js'></script>
 <script type="text/javascript">
 	var e= document.getElementById("title").nodeType;
-	var p = document.getElementsByTagName('p')[0].nodeType;
 	var span = $('span')
 	
-	console.log(p);
+	console.log(e);
 </script>
 </body>
 </html>
