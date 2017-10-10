@@ -118,6 +118,7 @@ var Zepto = (function () {
     // of nodes with `$.fn` and thus supplying all the Zepto functions
     // to the array. Note that `__proto__` is not supported on Internet
     // Explorer. This method can be overriden in plugins.
+    // `$.zepto.Z` 将数组`dom`的__proto__替换为`$.fn`
     zepto.Z = function (dom, selector) {
         dom = dom || []
         dom.__proto__ = $.fn
@@ -135,8 +136,7 @@ var Zepto = (function () {
     // takes a CSS selector and an optional context (and handles various
     // special cases).
     // This method can be overriden in plugins.
-
-    // `$.zepto.init`对应jQuery的`$.fn.init`; 接收一个css选择器,以及一个可选的context参数
+    // `$.zepto.init`对应jQuery的`$.fn.init`; 接收一个css选择器,以及一个可选的context(上下文)参数
     zepto.init = function (selector, context) {
         var dom
         // If nothing given, return an empty Zepto collection
@@ -163,8 +163,9 @@ var Zepto = (function () {
             }
             // If there's a context, create a collection on that context first, and select
             // nodes from there
-            // 如果参数中给出context 调用find方法
+            // 如果参数中给出context 调用find方法(:563)
             else if (context !== undefined) {
+                // 在$(context)的dom下寻找$(selector)
                 return $(context).find(selector)
             }
 
@@ -238,7 +239,7 @@ var Zepto = (function () {
     // `$.zepto.qsa` is Zepto's CSS selector implementation which
     // uses `document.querySelectorAll` and optimizes for some special cases, like `#id`.
     // This method can be overriden in plugins.
-    // `zepto.qsa获取dom节点;并且对例如`#id` `.className`的情况做了优化
+    // `zepto.qsa获取dom节点 返回数组;并且对例如`#id` `.className`的情况做了优化
     // 重写节点选择判断
     zepto.qsa = function (element, selector) {
         var found,
@@ -257,7 +258,7 @@ var Zepto = (function () {
             // element == window.document -> true 其他false; 
 
 
-        // 重写判断-解构源码中多层嵌套的三元运算 添加注释
+        // 重写条件判断-解构源码中多层嵌套的三元运算 添加注释
         // cls 类型为`HTMLCollection`
         var arr = [], cls
         // 如果element == window.document 且 isSimple 为true 且以'#'开头
@@ -268,14 +269,17 @@ var Zepto = (function () {
             }
         }else {
             // 元素节点nodeType == 1/ window.document.nodeType == 9
+            // 既不是元素节点 又不是document
             if(element.nodeType !== 1 && element.nodeType !== 9){
                 // 什么情况下??
                 console.log('element.nodeType = ' + element.nodeType)
                 arr = []
             }else {
+                // element 是dom节点
                 // 如果不是$('#id')的形式
                 if(isSimple && !maybeID){
                     // 如果是$('.item')的形式
+                    // 在当前节点下查询
                     if(maybeClass){
                         cls =  element.getElementsByClassName(nameOnly)
                     }else {
@@ -308,8 +312,6 @@ var Zepto = (function () {
             //                 element.querySelectorAll(selector) // Or it's not simple, and we need to query all
             //         )
     }
-
-
     
 
 
@@ -318,12 +320,12 @@ var Zepto = (function () {
     // function just call `$.zepto.init, which makes the implementation
     // details of selecting nodes and creating Zepto collections
     // patchable in plugins.
-
     // `$`是`Zepto`的基础对象;当调用`$`时;其实是调用`$.zepto.init`
     $ = function (selector, context) {
         return zepto.init(selector, context)
     }
 
+    // 深浅copy
     function extend(target, source, deep) {
         for (key in source)
             if (deep && (isPlainObject(source[key]) || isArray(source[key]))) {
@@ -338,6 +340,7 @@ var Zepto = (function () {
 
     // Copy all but undefined properties from one or more
     // objects to the `target` object.
+    // 深浅copy
     $.extend = function (target) {
         var deep, args = slice.call(arguments, 1)
         if (typeof target == 'boolean') {
@@ -562,17 +565,36 @@ var Zepto = (function () {
             return el && !isObject(el) ? el : $(el)
         },
         find: function (selector) {
+            // console.log(this)
             var result, $this = this
-            if (!selector) result = $()
-            else if (typeof selector == 'object')
+            // 谁调用的方法 this指向谁 this == $(context)
+            if (!selector) { 
+                console.log('无selector')
+                result = $()
+            }
+            // selector是对象 调用filter函数 什么情况下使用?
+            else if (typeof selector == 'object') {
                 result = $(selector).filter(function () {
                     var node = this
                     return emptyArray.some.call($this, function (parent) {
                         return $.contains(parent, node)
                     })
                 })
-            else if (this.length == 1) result = $(zepto.qsa(this[0], selector))
-            else result = this.map(function () { return zepto.qsa(this, selector) })
+            }
+            // 如果 能拿到$(context)length 为1  
+            else if (this.length == 1) { 
+                console.log(this[0].nodeType)        // dom 节点
+                console.log(typeof this[0]) // object
+
+                // 传入this[0]可以
+                // 1验证element.nodeType === 1; 
+                // 2在当前节点下查询使用this[0].getElementsBy...
+                result = $(zepto.qsa(this[0], selector)) 
+            }
+            else {
+                // $(context)length不为1的情况
+                result = this.map(function () { return zepto.qsa(this, selector) })
+            }
             return result
         },
         closest: function (selector, context) {

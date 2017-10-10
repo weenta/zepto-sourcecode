@@ -18,4 +18,8 @@ zepto1.16源码阅读
 - `document.querySelectorAll('span')`
 	返回的是`NodeList`
 
-
+- `$('span','ul')` 的方法的实现原理(document中只有一个ul)的情况
+```js
+	var u = document.getElementsByTagName('ul')
+	
+```
