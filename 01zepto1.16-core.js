@@ -61,7 +61,7 @@ var Zepto = (function () {
     // $.type() 判断参数类型
     function type(obj) {
         // calss2type已经被填入数据(populate)
-        console.log(class2type)
+        // console.log(class2type)
         return obj == null ? String(obj) :
             class2type[toString.call(obj)] || "object"
     }
@@ -214,18 +214,20 @@ var Zepto = (function () {
     zepto.fragment = function (html, name, properties) {
         // zepto.fragment(selector, RegExp.$1, context)
         var dom, nodes, container
-
+        
         // A special case optimization for a single tag
         // singleTagRE = /^<(\w+)\s*\/?>(?:<\/\1>|)$/,
         // 单标签情况 如<img/>
         // $('<img>');  RegExp.$1 -> 'img'
+        console.log(singleTagRE.test(html))
         if (singleTagRE.test(html)) {
             console.log(RegExp.$1)
             dom = $(document.createElement(RegExp.$1))
+            // console.log(dom)
         }
-        // 什么情况下使用??
+        // $('<p>hello</p>')  dom = undefinded
         if (!dom) {
-            console.log('!dom')
+            // 如果html是字符串
             if (html.replace) { 
                 console.log(html.replace)
                 html = html.replace(tagExpanderRE, "<$1></$2>")
@@ -233,11 +235,14 @@ var Zepto = (function () {
             if (name === undefined) {
                 name = fragmentRE.test(html) && RegExp.$1
             }
+
             if (!(name in containers)) name = '*'
 
             container = containers[name]
             container.innerHTML = '' + html
             dom = $.each(slice.call(container.childNodes), function () {
+                // 返回被删除的节点
+                console.log(this)
                 container.removeChild(this)
             })
         }
@@ -249,6 +254,7 @@ var Zepto = (function () {
         // 测试对象是否是“纯粹”的对象，这个对象是通过 对象常量（"{}"） 或者 new Object 创建的，如果是，则返回true。
         if (isPlainObject(properties)) {
             nodes = $(dom)
+            console.log(nodes)
             $.each(properties, function (key, value) {
                 if (methodAttributes.indexOf(key) > -1) nodes[key](value)
                 else nodes.attr(key, value)
@@ -622,9 +628,9 @@ var Zepto = (function () {
                 // 1 验证element.nodeType === 1; 
                 // 2 在当前节点下查询使用 this[0].getElementsByTagName/ClassName
                 result = $(zepto.qsa(this[0], selector)) 
-                console.log('res',result)
-                console.log(result instanceof Array)    // false
-                console.log(result instanceof Object)    // true
+                // console.log('res',result)
+                // console.log(result instanceof Array)    // false
+                // console.log(result instanceof Object)    // true
             }
             else {
                 // $(context)length不为1的情况
