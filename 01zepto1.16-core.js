@@ -193,12 +193,13 @@ var Zepto = (function () {
             // nodes from there
             else if (context !== undefined) return $(context).find(selector)
             // And last but no least, if it's a CSS selector, use it to select nodes.
-
+            // 如果是css 选择器 使用zepto.qsa来选择dom
             else dom = zepto.qsa(document, selector)
         }
     
         // create a new Zepto collection from the nodes found
-        return zepto.Z(dom, selector)
+        // return zepto.Z(dom, selector)
+        return dom
     }
 
     // `$.zepto.fragment` takes a html string and an optional tag name
@@ -295,8 +296,8 @@ var Zepto = (function () {
                 // 将结果转化为数组
                 arr = slice.call(cls)
             }
-            return arr
         }
+        return arr
 
         // 源码方式    
             // return (isDocument(element) && isSimple && maybeID) ?
@@ -572,7 +573,8 @@ var Zepto = (function () {
                 console.log('无selector')
                 result = $()
             }
-            // selector是对象 调用filter函数 什么情况下使用?
+            // selector是对象 调用filter函数 
+            // 什么情况下使用??
             else if (typeof selector == 'object') {
                 result = $(selector).filter(function () {
                     var node = this
@@ -583,13 +585,16 @@ var Zepto = (function () {
             }
             // 如果 能拿到$(context)length 为1  
             else if (this.length == 1) { 
-                console.log(this[0].nodeType)        // dom 节点
-                console.log(typeof this[0]) // object
+                // console.log(this[0].nodeType)        // dom 节点
+                // console.log(typeof this[0]) // object
 
                 // 传入this[0]可以
-                // 1验证element.nodeType === 1; 
-                // 2在当前节点下查询使用this[0].getElementsBy...
+                // 1 验证element.nodeType === 1; 
+                // 2 在当前节点下查询使用this[0].getElementsByTagName/ClassName
                 result = $(zepto.qsa(this[0], selector)) 
+                console.log('res',result)
+                console.log(result instanceof Array)    // false
+                console.log(result instanceof Object)    // true
             }
             else {
                 // $(context)length不为1的情况
