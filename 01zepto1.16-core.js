@@ -58,7 +58,10 @@ var Zepto = (function () {
         return match
     }
 
+    // $.type() 判断参数类型
     function type(obj) {
+        // calss2type已经被填入数据(populate)
+        console.log(class2type)
         return obj == null ? String(obj) :
             class2type[toString.call(obj)] || "object"
     }
@@ -67,6 +70,7 @@ var Zepto = (function () {
     function isWindow(obj) { return obj != null && obj == obj.window }
     function isDocument(obj) { return obj != null && obj.nodeType == obj.DOCUMENT_NODE }
     function isObject(obj) { return type(obj) == "object" }
+    // 测试对象是否是“纯粹”的对象，这个对象是通过 对象常量（"{}"） 或者 new Object 创建的，如果是，则返回true。
     function isPlainObject(obj) {
         return isObject(obj) && !isWindow(obj) && Object.getPrototypeOf(obj) == Object.prototype
     }
@@ -118,7 +122,7 @@ var Zepto = (function () {
     // of nodes with `$.fn` and thus supplying all the Zepto functions
     // to the array. Note that `__proto__` is not supported on Internet
     // Explorer. This method can be overriden in plugins.
-    // `$.zepto.Z` 将数组`dom`的__proto__替换为`$.fn`
+    // `zepto.Z` 将数组`dom`的__proto__替换为`$.fn`, 添加selector属性
     zepto.Z = function (dom, selector) {
         dom = dom || []
         dom.__proto__ = $.fn
@@ -198,8 +202,7 @@ var Zepto = (function () {
         }
     
         // create a new Zepto collection from the nodes found
-        // return zepto.Z(dom, selector)
-        return dom
+        return zepto.Z(dom, selector)
     }
 
     // `$.zepto.fragment` takes a html string and an optional tag name
@@ -207,16 +210,29 @@ var Zepto = (function () {
     // The generated DOM nodes are returned as an array.
     // This function can be overriden in plugins for example to make
     // it compatible with browsers that don't support the DOM fully.
-    // zepto.fragment 接收html片段和一个可选的标签名称来穿件DOM节点 创建的DOM以数组的形式返回
+    // zepto.fragment 接收html片段和一个可选的标签名称来创建DOM节点 创建的DOM以数组的形式返回
     zepto.fragment = function (html, name, properties) {
+        // zepto.fragment(selector, RegExp.$1, context)
         var dom, nodes, container
 
         // A special case optimization for a single tag
-        if (singleTagRE.test(html)) dom = $(document.createElement(RegExp.$1))
-
+        // singleTagRE = /^<(\w+)\s*\/?>(?:<\/\1>|)$/,
+        // 单标签情况 如<img/>
+        // $('<img>');  RegExp.$1 -> 'img'
+        if (singleTagRE.test(html)) {
+            console.log(RegExp.$1)
+            dom = $(document.createElement(RegExp.$1))
+        }
+        // 什么情况下使用??
         if (!dom) {
-            if (html.replace) html = html.replace(tagExpanderRE, "<$1></$2>")
-            if (name === undefined) name = fragmentRE.test(html) && RegExp.$1
+            console.log('!dom')
+            if (html.replace) { 
+                console.log(html.replace)
+                html = html.replace(tagExpanderRE, "<$1></$2>")
+            }
+            if (name === undefined) {
+                name = fragmentRE.test(html) && RegExp.$1
+            }
             if (!(name in containers)) name = '*'
 
             container = containers[name]
@@ -226,6 +242,11 @@ var Zepto = (function () {
             })
         }
 
+        //$("<p />", { text:"Hello", id:"greeting", css:{color:'darkblue'} })
+        //=> <p id=greeting style="color:darkblue">Hello</p>
+
+        // $.isPlainObject(object)   ⇒ boolean
+        // 测试对象是否是“纯粹”的对象，这个对象是通过 对象常量（"{}"） 或者 new Object 创建的，如果是，则返回true。
         if (isPlainObject(properties)) {
             nodes = $(dom)
             $.each(properties, function (key, value) {
@@ -449,14 +470,22 @@ var Zepto = (function () {
         return flatten(values)
     }
 
+    // function likeArray(obj) { return typeof obj.length == 'number' }
+    // 遍历
     $.each = function (elements, callback) {
         var i, key
         if (likeArray(elements)) {
-            for (i = 0; i < elements.length; i++)
-                if (callback.call(elements[i], i, elements[i]) === false) return elements
+            for (i = 0; i < elements.length; i++){
+                if (callback.call(elements[i], i, elements[i]) === false) { 
+                    return elements
+                }
+            }
         } else {
-            for (key in elements)
-                if (callback.call(elements[key], key, elements[key]) === false) return elements
+            for (key in elements){
+                if (callback.call(elements[key], key, elements[key]) === false){
+                    return elements
+                }
+            }
         }
 
         return elements
@@ -565,6 +594,7 @@ var Zepto = (function () {
             var el = this[this.length - 1]
             return el && !isObject(el) ? el : $(el)
         },
+        // 使用this[0].getElementsByTagName/ClassName来获取dom
         find: function (selector) {
             // console.log(this)
             var result, $this = this
@@ -590,7 +620,7 @@ var Zepto = (function () {
 
                 // 传入this[0]可以
                 // 1 验证element.nodeType === 1; 
-                // 2 在当前节点下查询使用this[0].getElementsByTagName/ClassName
+                // 2 在当前节点下查询使用 this[0].getElementsByTagName/ClassName
                 result = $(zepto.qsa(this[0], selector)) 
                 console.log('res',result)
                 console.log(result instanceof Array)    // false
