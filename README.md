@@ -5,9 +5,8 @@ zepto1.16源码阅读
 ## notes
 
 - `document.getElementsByClassName() / document.getElementsByTagName()等` 	
-	返回`HTMLCollection`类型是`Object` 而非`Array`		 
-	所以zepto中使用`[].slice.call()`方法将其转换为`Array`		
-			
+> 返回`HTMLCollection`类型是`Object` 而非`Array`		 
+> 所以zepto中使用`[].slice.call()`方法将其转换为`Array`		
 ```js
 	let cls = document.getElementsByTagName('span');
 	cls instanceof Array	// false
