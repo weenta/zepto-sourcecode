@@ -152,14 +152,14 @@ var Zepto = (function () {
         var dom
         
         n+=1;
-        console.log('n:',n)
+        // console.log('n:',n)
         // If nothing given, return an empty Zepto collection
         if (!selector) return zepto.Z()
         // Optimize for string selectors
         // 如果如果选择器是`string`类型
         // $('span')
         else if (typeof selector == 'string') {
-            // 返回selector有什么用??
+            
             selector = selector.trim()
 
 

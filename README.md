@@ -49,7 +49,7 @@ zepto1.16源码阅读
 			dom = $(document.createElement(RegExp.$1))
 
 	// STEP3: 二进 zepto.init
-		// 此时selector = document.createElement(RegExp.$1)
+		// 此时selector = document.createElement(p)
 		else if typeof selector == 'string'	 	// false
 		else if isFunction(selector) 			// false
 		else if zepto.isZ(selector) 			// false
@@ -75,7 +75,7 @@ zepto1.16源码阅读
 		// 此时已获取nodes值
 		nodes = return selector
 
-	// STEP7: $.each()	遍历处理
+	// STEP7: $.each()	遍历处理  为 nodes 添加 properties
 		$.each() $.text() $.attr() 处理
 
 	// STEP8: zepto.fragment 处理结束
