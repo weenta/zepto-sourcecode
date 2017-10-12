@@ -25,7 +25,7 @@ zepto1.16源码阅读
 	arrU = slice.call(u) // arrU 即`zepto.Z`处理前的结果
 ```			
 
-- `$('span','ul')` 的实现原理 (document中只有一个ul的情况)
+- `$('span','ul')` 的实现原理 (document中只有一个ul的情况下)
 ```js
 	var slice = [].slice, u, arrU, result, res
 	u = document.getElementsByTagName('ul')
@@ -33,6 +33,65 @@ zepto1.16源码阅读
 	result = arrU[0].getElementsByTagName('span')
 	res = slice.call(result)
 ```
+
+- `$("<p />", { text:"Hello", id:"greeting"})` 的实现过程	    
+> 最终结果  `<p id=greeting">Hello</p>`    
+```js
+
+	// STEP1: 一进 zepto.init 
+		else if typeof selector == 'string'  // true	
+			selector[0] == '<' && fragmentRE.test(selector) // true
+				dom = zepto.fragment(selector, RegExp.$1, context) 
+
+	// STEP2: 一进 zepto.fragment 获取dom
+		// html === STEP1 中的selector; RegExp.$1 === p
+		if singleTagRE.test(html)	// true	
+			dom = $(document.createElement(RegExp.$1))
+
+	// STEP3: 二进 zepto.init
+		// 此时selector = document.createElement(RegExp.$1)
+		else if typeof selector == 'string'	 	// false
+		else if isFunction(selector) 			// false
+		else if zepto.isZ(selector) 			// false
+		else {
+			// 进入else
+			else if (isObject(selector)) 	// true
+				dom = [selector]
+		}
+		return zepto.Z(dom, selector)
+
+	// STEP4: 回到STEP2中的 
+		// 此时已获取dom
+		dom = return zepto.Z(dom, selector)
+		// 继续往下走
+			if isPlainObject(properties) // true
+				nodes = $(dom) 
+
+	// STEP5: 三进zepto.init
+		else if (zepto.isZ(selector) // true
+			return selector
+
+	// STEP6: 回到STEP4中 
+		// 此时已获取nodes值
+		nodes = return selector
+
+	// STEP7: $.each()	遍历处理
+		$.each() $.text() $.attr() 处理
+
+	// STEP8: zepto.fragment 处理结束
+		return dom
+
+	// STEP9: 回到STEP1中
+		// 此时已得到dom
+		dom = zepto.fragment(selector, RegExp.$1, context)
+		// 继续 往下走
+		selector = null
+		return zepto.Z(dom, selector)
+		// zepto.Z处理完成后结束
+		// 返回结果
+		`<p id=greeting">Hello</p>`
+```
+
 
 - `$.type()` 实现原理    
 > 使用`Object.prototype.toString.call()` 方法    
@@ -43,16 +102,16 @@ zepto1.16源码阅读
 	};
 	(function(){
 		var num = 1,
-			str = 'abc',
-			arr = [1,2,3],
-			obj = {a:10},
-			d = new Date(),
-			f = function(){},
-			reg = new RegExp(),
-			bo = true,
-			e = Error,
-			nul = null,
-			und = undefined
+		    str = 'abc',
+		    arr = [1,2,3],
+		    obj = {a:10},
+		    d = new Date(),
+		    f = function(){},
+		    reg = new RegExp(),
+		    bo = true,
+		    e = Error,
+		    nul = null,
+		    und = undefined
 		
 		console.log('num: ',fn(num))
 		console.log('str: ',fn(str))
@@ -80,3 +139,4 @@ zepto1.16源码阅读
 	// und:  [object Undefined]
 	
 ```
+

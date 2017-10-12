@@ -44,9 +44,13 @@ var Zepto = (function () {
         },
         isArray = Array.isArray ||
             function (object) { return object instanceof Array }
-
+    
+    // 判断 element 是否符合 selector 的选择要求 ??       
     zepto.matches = function (element, selector) {
+        // 如果selector无值 element 无值 element有值却不是DOM节点  返回false
         if (!selector || !element || element.nodeType !== 1) return false
+
+        // matchesSelector 如果元素将被指定的选择器字符串选择 方法返回true; 否则返回false
         var matchesSelector = element.webkitMatchesSelector || element.mozMatchesSelector ||
             element.oMatchesSelector || element.matchesSelector
         if (matchesSelector) return matchesSelector.call(element, selector)
@@ -76,6 +80,7 @@ var Zepto = (function () {
     }
     function likeArray(obj) { return typeof obj.length == 'number' }
 
+    //normalize Array
     function compact(array) { return filter.call(array, function (item) { return item != null }) }
     function flatten(array) { return array.length > 0 ? $.fn.concat.apply([], array) : array }
     camelize = function (str) { return str.replace(/-+(.)?/g, function (match, chr) { return chr ? chr.toUpperCase() : '' }) }
@@ -135,7 +140,9 @@ var Zepto = (function () {
     zepto.isZ = function (object) {
         return object instanceof zepto.Z
     }
-
+    // 测试用
+    var n = 0;
+    
     // `$.zepto.init` is Zepto's counterpart to jQuery's `$.fn.init` and
     // takes a CSS selector and an optional context (and handles various
     // special cases).
@@ -143,13 +150,15 @@ var Zepto = (function () {
     // `$.zepto.init`对应jQuery的`$.fn.init`; 接收一个css选择器,以及一个可选的context(上下文)参数
     zepto.init = function (selector, context) {
         var dom
+        
+        n+=1;
+        console.log('n:',n)
         // If nothing given, return an empty Zepto collection
         if (!selector) return zepto.Z()
         // Optimize for string selectors
+        // 如果如果选择器是`string`类型
+        // $('span')
         else if (typeof selector == 'string') {
-            // 如果如果选择器是`string`类型
-            // $('span')
-
             // 返回selector有什么用??
             selector = selector.trim()
 
@@ -183,13 +192,27 @@ var Zepto = (function () {
         // If a function is given, call it when the DOM is ready
         else if (isFunction(selector)) return $(document).ready(selector)
         // If a Zepto collection is given, just return it
-        else if (zepto.isZ(selector)) return selector
+        else if (zepto.isZ(selector)) {
+            console.log('isZ')
+            return selector
+            console.log('return')
+        }
         else {
+            
             // normalize array if an array of nodes is given
-            if (isArray(selector)) dom = compact(selector)
+            // selector 是Array
+            if (isArray(selector)){
+                console.log('compact')
+                dom = compact(selector)
+            } 
             // Wrap DOM nodes.
-            else if (isObject(selector))
-                dom = [selector], selector = null
+            // select 是Object
+            else if (isObject(selector)){
+                console.log('isObject 1',isObject(selector))
+                dom = [selector]
+                selector = null
+              
+            }
             // If it's a html fragment, create nodes from it
             else if (fragmentRE.test(selector))
                 dom = zepto.fragment(selector.trim(), RegExp.$1, context), selector = null
@@ -219,9 +242,9 @@ var Zepto = (function () {
         // singleTagRE = /^<(\w+)\s*\/?>(?:<\/\1>|)$/,
         // 单标签情况 如<img/>
         // $('<img>');  RegExp.$1 -> 'img'
-        console.log(singleTagRE.test(html))
+        // console.log(singleTagRE.test(html))
         if (singleTagRE.test(html)) {
-            console.log(RegExp.$1)
+            // console.log(RegExp.$1)
             dom = $(document.createElement(RegExp.$1))
             // console.log(dom)
         }
@@ -229,7 +252,7 @@ var Zepto = (function () {
         if (!dom) {
             // 如果html是字符串
             if (html.replace) { 
-                console.log(html.replace)
+                // console.log(html.replace)
                 html = html.replace(tagExpanderRE, "<$1></$2>")
             }
             if (name === undefined) {
@@ -242,19 +265,28 @@ var Zepto = (function () {
             container.innerHTML = '' + html
             dom = $.each(slice.call(container.childNodes), function () {
                 // 返回被删除的节点
-                console.log(this)
+                // console.log(this) this指向container.childNodes中当前遍历的节点 // 在此处为p节点
                 container.removeChild(this)
             })
         }
 
-        //$("<p />", { text:"Hello", id:"greeting", css:{color:'darkblue'} })
+                      // properties  
+        //$("<p />", { text:"Hello", id:"greeting"})
         //=> <p id=greeting style="color:darkblue">Hello</p>
 
         // $.isPlainObject(object)   ⇒ boolean
-        // 测试对象是否是“纯粹”的对象，这个对象是通过 对象常量（"{}"） 或者 new Object 创建的，如果是，则返回true。
+        // properties 是对象
+        console.log('isPlainObject 2',isPlainObject(properties))
         if (isPlainObject(properties)) {
+            // console.log('dom')
+            console.log('dom 3',dom)
+            console.log('isArray 4',isArray(dom))
+            console.log('isObject 5',isObject(dom))
+            // 为什么要$(dom)这一步??
             nodes = $(dom)
-            console.log(nodes)
+            console.log('nodes 6',nodes)
+            // console.log(nodes)
+            // 似乎dom 和 $(dom)没有什么区别
             $.each(properties, function (key, value) {
                 if (methodAttributes.indexOf(key) > -1) nodes[key](value)
                 else nodes.attr(key, value)
@@ -549,14 +581,20 @@ var Zepto = (function () {
                     this.parentNode.removeChild(this)
             })
         },
+        // 遍历数组元素或以key-value值对方式遍历对象。回调函数返回 false 时停止遍历。
         each: function (callback) {
             emptyArray.every.call(this, function (el, idx) {
                 return callback.call(el, idx, el) !== false
             })
             return this
         },
+        // 过滤对象集合，返回对象集合中满足css选择器的项。
+        //如果参数为一个函数，函数返回有实际值得时候，元素才会被返回。在函数中， this 关键字指向当前的元素。
+        // 与它相反的功能not.
         filter: function (selector) {
+            // 如果是函数
             if (isFunction(selector)) return this.not(this.not(selector))
+            // 不是函数
             return $(filter.call(this, function (element) {
                 return zepto.matches(element, selector)
             }))
@@ -567,6 +605,9 @@ var Zepto = (function () {
         is: function (selector) {
             return this.length > 0 && zepto.matches(this[0], selector)
         },
+        //过滤当前对象集合，获取一个新的对象集合，它里面的元素不能匹配css选择器。
+        //如果另一个参数为Zepto对象集合，那么返回的新Zepto对象中的元素都不包含在该参数对象中。如果参数是一个函数。仅仅包含函数执行为false值得时候的元素，函数的 this 关键字指向当前循环元素。
+        // 与它相反的功能 filter.
         not: function (selector) {
             var nodes = []
             if (isFunction(selector) && selector.call !== undefined)
@@ -600,6 +641,7 @@ var Zepto = (function () {
             var el = this[this.length - 1]
             return el && !isObject(el) ? el : $(el)
         },
+        // 在当对象前集合内查找符合CSS选择器的每个元素的后代元素。
         // 使用this[0].getElementsByTagName/ClassName来获取dom
         find: function (selector) {
             // console.log(this)
@@ -754,6 +796,7 @@ var Zepto = (function () {
                 }) :
                 (0 in this ? this[0].textContent : null)
         },
+        // 读取或设置dom的属性。
         attr: function (name, value) {
             var result
             return (typeof name == 'string' && !(1 in arguments)) ?
