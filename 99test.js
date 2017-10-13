@@ -1,25 +1,34 @@
-$.contains = document.documentElement.contains ?
-function (parent, node) {
-    return parent !== node && parent.contains(node)
-} :
-function (parent, node) {
-    while (node && (node = node.parentNode))
-        if (node === parent) return true
-    return false
+// 深浅copy
+function extend(target, source, deep) {
+    for (key in source)
+        if (deep && (isPlainObject(source[key]) || isArray(source[key]))) {
+            if (isPlainObject(source[key]) && !isPlainObject(target[key]))
+                target[key] = {}
+            if (isArray(source[key]) && !isArray(target[key]))
+                target[key] = []
+            extend(target[key], source[key], deep)
+        }
+        else if (source[key] !== undefined) target[key] = source[key]
 }
 
-var c = function(parent,node){
-    var n, res
-    if(parent !== node && parent.contains(node)){
-       res = ture
-    }else {
-        if(node && ( p  = node.parentNode)){   // 如果node不为空 将node的父节点赋值给n
-            if(n === parent){
-                res = true
-            } else {
-                res =  false
-            }
-        }
+// Copy all but undefined properties from one or more
+// objects to the `target` object.
+// 深浅copy
+$.extend = function (target) {
+    var deep, args = slice.call(arguments, 1)
+    if (typeof target == 'boolean') {
+        deep = target
+        target = args.shift()
     }
-    return res
+    args.forEach(function (arg) { extend(target, arg, deep) })
+    return target
+}
+
+
+// for in 数组 对象皆可
+function fnc(val){
+    for( key in val){
+        console.log(`key: ${key}  val: ${val[key]}`)
+        
+    }
 }

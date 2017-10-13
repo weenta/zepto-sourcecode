@@ -172,4 +172,9 @@ zepto1.16源码阅读
 	$.contains(u,l)  // true
 ```
 
-- camelize??
+- $.camelCase??
+
+- `$.extend(target,source)` 浅copy	 
+- `$.extend(true,target,source)` 深copy
+> 通过源对象扩展目标对象的属性，源对象属性将覆盖目标对象属性。
+
