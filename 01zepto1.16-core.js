@@ -1,3 +1,5 @@
+/* Zepto v1.1.6 - 源码阅读*/
+
 var Zepto = (function () {
     var undefined, key, $, classList, emptyArray = [], slice = emptyArray.slice, filter = emptyArray.filter,
         document = window.document,

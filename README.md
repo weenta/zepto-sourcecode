@@ -82,7 +82,7 @@ zepto1.16源码阅读
 		return dom
 
 	// STEP9: 回到STEP1中
-		// 此时已得到dom
+		// 此时得到上一步返回的dom
 		dom = zepto.fragment(selector, RegExp.$1, context)
 		// 继续 往下走
 		selector = null
