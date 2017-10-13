@@ -140,3 +140,36 @@ zepto1.16源码阅读
 	
 ```
 
+- `$.contains` 实现原理
+> 使用`Node.contains()`  
+> *returns a Boolean value indicating whether a node is a descendant of a given node or not.*   
+> [MDN:Node.contains()](https://developer.mozilla.org/en-US/docs/Web/API/Node/contains)
+```js
+	var d = document.getElementsByTagName('div')[0],
+		u = document.getElementsByTagName('ul')[0],
+		l = document.getElementsByTagName('li')[0]
+
+	// Node.contains()
+	document.body.contains(d)  // true
+
+	// $.contains
+	function c(parent,node){
+		var n, res
+		if(parent !== node && parent.contains(node)){
+		res = true
+		}else {
+			if(node && ( p  = node.parentNode)){   // 如果node不为空 将node的父节点赋值给n
+				if( n === parent){
+					res = true
+				} else {
+					res =  false
+				}
+			}
+		}
+		return res
+	}
+	c(u,l) // true
+	$.contains(u,l)  // true
+```
+
+- camelize??
