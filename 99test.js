@@ -1,18 +1,34 @@
-// 源码
-camelize = function (str) { return str.replace(/-+(.)?/g, function (match, chr) { return chr ? chr.toUpperCase() : '' }) }
-
-
-var fn = function (match, chr) { 
-    // console.log(chr)
-    return chr ? chr.toUpperCase() : ''
+// 深浅copy
+function extend(target, source, deep) {
+    for (key in source)
+        if (deep && (isPlainObject(source[key]) || isArray(source[key]))) {
+            if (isPlainObject(source[key]) && !isPlainObject(target[key]))
+                target[key] = {}
+            if (isArray(source[key]) && !isArray(target[key]))
+                target[key] = []
+            extend(target[key], source[key], deep)
+        }
+        else if (source[key] !== undefined) target[key] = source[key]
 }
 
-var c = function (str) { 
-    return str.replace(/-+(.)?/g, function (match, chr) { 
-        console.log(1111)
-        console.log(match)
-        console.log('chr',chr)
-        return chr ? chr.toUpperCase() : ''
-    }) 
+// Copy all but undefined properties from one or more
+// objects to the `target` object.
+// 深浅copy
+$.extend = function (target) {
+    var deep, args = slice.call(arguments, 1)
+    if (typeof target == 'boolean') {
+        deep = target
+        target = args.shift()
+    }
+    args.forEach(function (arg) { extend(target, arg, deep) })
+    return target
 }
 
+
+// for in 数组 对象皆可
+function fnc(val){
+    for( key in val){
+        console.log(`key: ${key}  val: ${val[key]}`)
+        
+    }
+}
