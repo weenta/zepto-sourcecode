@@ -76,8 +76,9 @@ var Zepto = (function () {
     function isWindow(obj) { return obj != null && obj == obj.window }
     function isDocument(obj) { return obj != null && obj.nodeType == obj.DOCUMENT_NODE }
     function isObject(obj) { return type(obj) == "object" }
-    // 测试对象是否是“纯粹”的对象，这个对象是通过 对象常量（"{}"） 或者 new Object 创建的，如果是，则返回true。
+    // 测试对象是否通过 对象常量（"{}"） 或者 new Object 创建的，如果是，则返回true。
     function isPlainObject(obj) {
+                // 是对象          不是windows     Object.getPrototypeOf(obj) 返回obj的原型(内部[[Prototype]]属性的值)
         return isObject(obj) && !isWindow(obj) && Object.getPrototypeOf(obj) == Object.prototype
     }
     function likeArray(obj) { return typeof obj.length == 'number' }
@@ -278,7 +279,7 @@ var Zepto = (function () {
 
         // $.isPlainObject(object)   ⇒ boolean
         // properties 是对象
-        console.log('isPlainObject 2',isPlainObject(properties))
+        // console.log('isPlainObject 2',isPlainObject(properties))
         if (isPlainObject(properties)) {
             // console.log('dom')
             console.log('dom 3',dom)
