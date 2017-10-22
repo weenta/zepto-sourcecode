@@ -98,7 +98,7 @@ zepto1.16源码阅读
 > [MDN: Object.prototype.toString()](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/toString)
 ```js
 	var fn = function(val){
-		return Object.prototype.toString.call(val)
+		return Object.prototype.toString.call(val).slice(8,-1).toLowerCase()
 	};
 	(function(){
 		var num = 1,
@@ -126,17 +126,17 @@ zepto1.16源码阅读
 		console.log('und: ',fn(und))
 	})();
 
-	// num:  [object Number]
-	// str:  [object String]
-	// arr:  [object Array]
-	// obj:  [object Object]
-	// d:  	 [object Date]
-	// f:    [object Function]
-	// reg:  [object RegExp]
-	// bo:   [object Boolean]
-	// e:    [object Function]
-	// nul:  [object Null]
-	// und:  [object Undefined]
+	// num:  number
+	// str:  string
+	// arr:  array
+	// obj:  object
+	// d:  	 date
+	// f:    function
+	// reg:  regexp
+	// bo:   boolean
+	// e:    function
+	// nul:  null
+	// und:  undefined
 	
 ```
 
