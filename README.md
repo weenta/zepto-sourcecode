@@ -178,7 +178,7 @@ zepto1.16源码阅读
 - `$.extend(true,target,source)` 深copy
 > 通过源对象扩展目标对象的属性，源对象属性将覆盖目标对象属性。
 ```js
-	// 浅copy $.extend(target,source)
+// 浅copy $.extend(target,source)
 	var target = { t1:'a'},
 		source = { s1: 'm', s2: 'n'}
 	function extend(target,source){
@@ -194,5 +194,6 @@ zepto1.16源码阅读
 	var target1 = {t1: "a", s2: "b"}
 	extend(target,source);	// {t1: "a", s2: "n", s1: "m"}
 
-	// 
+// 深copy $.extend(true,target,source)
+
 ```

@@ -30,11 +30,5 @@ $.extend = function (target) {
 }
 
 
-// for in 数组 对象皆可
-function fnc(val){
-    for( key in val){
-        console.log(`key: ${key}  val: ${val[key]}`)
-        
-    }
-}
+
 
