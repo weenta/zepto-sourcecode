@@ -6,7 +6,7 @@ source = {
         o2: '222'
     }
 }
-console.log(111)
+console.log('start')
 function c(target,source){
     console.log(target)
     console.log(source)

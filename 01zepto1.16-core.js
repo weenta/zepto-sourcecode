@@ -390,7 +390,7 @@ var Zepto = (function () {
 
     // 深浅copy
     function extend(target, source, deep) {
-        for (key in source)
+        for (key in source)     // 二次进入后 source已成为source.obj 继续for循环
             if (deep && (isPlainObject(source[key]) || isArray(source[key]))) {
                 if (isPlainObject(source[key]) && !isPlainObject(target[key]))
                     target[key] = {}
@@ -405,10 +405,10 @@ var Zepto = (function () {
     // objects to the `target` object.
     // 深浅copy
     $.extend = function (target) {
-        var deep, args = slice.call(arguments, 1)
+        var deep, args = slice.call(arguments, 1)   //args=[target,source]
         if (typeof target == 'boolean') {
             deep = target
-            target = args.shift()
+            target = args.shift() //target 删除并返回数组的第一个元素 原数组改变
         }
         args.forEach(function (arg) { extend(target, arg, deep) })
         return target
