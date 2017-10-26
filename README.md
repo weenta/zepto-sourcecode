@@ -137,8 +137,25 @@ zepto1.16源码阅读
 	// e:    function
 	// nul:  null
 	// und:  undefined
-	
 ```
+
+- `Object.getPrototypeOf()`	    
+> 方法返回指定对象的原型（内部[[Prototype]]属性的值)    
+可用于判断`Object/Array`类型   
+```js
+	var obj = { a: 1},
+		arr = [1,2]
+	
+	Object.getPrototypeOf(obj) === Object.prototype 	// true
+	Object.getPrototypeOf(arr) === Object.prototype  	// false
+	Object.getPrototypeOf(arr) === Array.prototype 		// true
+	Object.getPrototypeOf(arr).__proto__ === Object.prototype		// true
+
+	// 检测是否是`Array`一般不用这么麻烦 直接使用 Array.isArray(obj)方法即可
+	Array.isArray(arr) //true
+
+``` 
+
 
 - `$.contains` 实现原理
 > 使用`Node.contains()`  
@@ -178,7 +195,7 @@ zepto1.16源码阅读
 - `$.extend(true,target,source)` 深copy
 > 通过源对象扩展目标对象的属性，源对象属性将覆盖目标对象属性。
 ```js
-// 浅copy $.extend(target,source)
+// 浅copy实现
 	function extend(target,source){
 		for (key in source){
 			if(source[key] !== undefined){
@@ -198,12 +215,36 @@ zepto1.16源码阅读
 	extend(target,source); 
 	target; // {t:'target', s:'source',obj:{o1:'obj1',o2:'obj2'}}
 
-	source.obj.o3 = 'obj3'
+	source.obj.o3 = 'obj3'	// source的obj属性改变 target的obj属性会同时变 因为他们的obj属性指向堆内存中同一地址 
 	target;	// {t:'target', s:'source',obj:{o1:'obj1',o2:'obj2',o3:'obj3}}
 
-	target.obj.o1 = 'obj111';
+	target.obj.o1 = 'obj111';	// 反之亦然
 	source; // {s:'source',obj:{o1:'obj111',o2:'obj2',o3:'obj3}}
 
-// 深copy $.extend(true,target,source)
+// 深copy实现
+	function extend(target,source){
+		for(key in source){
+			// 判断source[key]是否是Object或Array
+			if(Object.getPrototypeOf(source[key]) === Object.prototype || Array.isArray(source[key])){
+				if((Object.getPrototypeOf(source[key]) === Object.prototype)){
+					target[key] = {}
+				}
+				if(Array.isArray(source[key])){
+					target[key] = []
+				}
+				extend(target[key],source[key])
+			} 
+			else {
+				if(source[key] !== undefined){
+					target[key] = source[key]
+				} 
+			}
+		}
+		return target
+	}
+
+	extend(target,source); 
+	source.obj.o3 = 'obj3'	// 此时source的obj属性改变 target的obj属性不变 他们的obj属性指向不同地址
+	target;	// {t:'target', s:'source',obj:{o1:'obj1',o2:'obj2'}}
 
 ```
