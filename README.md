@@ -97,7 +97,7 @@ zepto1.16源码阅读
 > 使用`Object.prototype.toString.call()` 方法    
 > [MDN: Object.prototype.toString()](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/toString)
 ```js
-	var fn = function(val){
+	var type = function(val){
 		return Object.prototype.toString.call(val).slice(8,-1).toLowerCase()
 	};
 	(function(){
@@ -113,17 +113,17 @@ zepto1.16源码阅读
 		    nul = null,
 		    und = undefined
 		
-		console.log('num: ',fn(num))
-		console.log('str: ',fn(str))
-		console.log('arr: ',fn(arr))
-		console.log('obj: ',fn(obj))
-		console.log('d: ',fn(d))
-		console.log('f: ',fn(f))
-		console.log('reg: ',fn(reg))
-		console.log('bo: ',fn(bo))
-		console.log('e: ',fn(e))
-		console.log('nul: ',fn(nul))
-		console.log('und: ',fn(und))
+		console.log('num: ',type(num))
+		console.log('str: ',type(str))
+		console.log('arr: ',type(arr))
+		console.log('obj: ',type(obj))
+		console.log('d: ',type(d))
+		console.log('f: ',type(f))
+		console.log('reg: ',type(reg))
+		console.log('bo: ',type(bo))
+		console.log('e: ',type(e))
+		console.log('nul: ',type(nul))
+		console.log('und: ',type(und))
 	})();
 
 	// num:  number
@@ -189,21 +189,10 @@ zepto1.16源码阅读
 	$.contains(u,l)  // true
 ```
 
-- $.camelCase??
-
 - `$.extend(target,source)` 浅copy	 
 - `$.extend(true,target,source)` 深copy
 > 通过源对象扩展目标对象的属性，源对象属性将覆盖目标对象属性。
 ```js
-// 浅copy实现
-	function extend(target,source){
-		for (key in source){
-			if(source[key] !== undefined){
-				target[key] = source[key]
-			}
-		}
-		return target
-	}
 	var target = { t:'target'},
 		source = {
 			s:'source',
@@ -212,16 +201,20 @@ zepto1.16源码阅读
 				o2: 'obj2'
 			}
 		}
+
+	// 浅copy实现
+	function extend(target,source){
+		for (key in source){
+			if(source[key] !== undefined){
+				target[key] = source[key]
+			}
+		}
+		return target
+	}
 	extend(target,source); 
-	target; // {t:'target', s:'source',obj:{o1:'obj1',o2:'obj2'}}
+	target.obj === source.obj;	// true  双方的obj属性指向同一地址
 
-	source.obj.o3 = 'obj3'	// source的obj属性改变 target的obj属性会同时变 因为他们的obj属性指向堆内存中同一地址 
-	target;	// {t:'target', s:'source',obj:{o1:'obj1',o2:'obj2',o3:'obj3}}
-
-	target.obj.o1 = 'obj111';	// 反之亦然
-	source; // {s:'source',obj:{o1:'obj111',o2:'obj2',o3:'obj3}}
-
-// 深copy实现
+	// 深copy实现
 	function extend(target,source){
 		for(key in source){
 			// 判断source[key]是否是Object或Array
@@ -242,9 +235,7 @@ zepto1.16源码阅读
 		}
 		return target
 	}
-
 	extend(target,source); 
-	source.obj.o3 = 'obj3'	// 此时source的obj属性改变 target的obj属性不变 他们的obj属性指向不同地址
-	target;	// {t:'target', s:'source',obj:{o1:'obj1',o2:'obj2'}}
+	target.obj === source.obj  	// false  双方obj属性指向不同地址
 
 ```
