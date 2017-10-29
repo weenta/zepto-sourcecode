@@ -139,7 +139,7 @@ zepto1.16源码阅读
 	// und:  undefined
 ```
 
-- `Object.getPrototypeOf()`	    
+-  `Object.getPrototypeOf()`	    
 > 方法返回指定对象的原型（内部[[Prototype]]属性的值)    
 可用于判断`Object/Array`类型   
 ```js
@@ -157,7 +157,7 @@ zepto1.16源码阅读
 ``` 
 
 
-- `$.contains` 实现原理
+-  `$.contains` 实现原理
 > 使用`Node.contains()`  
 > *returns a Boolean value indicating whether a node is a descendant of a given node or not.*   
 > [MDN:Node.contains()](https://developer.mozilla.org/en-US/docs/Web/API/Node/contains)
@@ -189,7 +189,7 @@ zepto1.16源码阅读
 	$.contains(u,l)  // true
 ```
 
-- `$.extend(target,source)` 浅copy	 
+-  `$.extend(target,source)` 浅copy	 
 - `$.extend(true,target,source)` 深copy
 > 通过源对象扩展目标对象的属性，源对象属性将覆盖目标对象属性。
 ```js
@@ -239,3 +239,24 @@ zepto1.16源码阅读
 	target.obj === source.obj  	// false  双方obj属性指向不同地址
 
 ```
+
+
+-  `flatten`数组扁平化      
+> 利用`[].concat.apply([],array) 方法`    
+> *此处只能用`apply()`不可使用`call()`方法*    
+> [*`apply()`方法接收一个包含多个参数的**数组***](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Function/apply)    
+```js
+	// 单层
+	function flatten(array) { 
+		let arr
+		if(array.length > 0){
+			arr = [].concat.apply([],array)
+		}else {
+			arr = array
+		}
+		return arr
+	}
+	
+```
+
+
