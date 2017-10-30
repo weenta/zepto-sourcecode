@@ -1,37 +1,3 @@
-
-
-
-// var s = $.map(arr,cb)
-// console.log(s)
-// 数组扁平化
-function flatten(array,flatArr) { 
-    let arr = [];
-    flatArr = flatArr || []
-    if(array.length > 0){
-        for(let i=0; i<arr.length; i++){
-            if(Array.isArray(array[i])){
-                flatten(array[i],flatArr)
-            }else {
-                flatArr = flatArr.concat.apply([],array[i])
-            }
-        }
-    }
-   
-    return flatArr
-}
-
-var arr = [1,2,['a','b',[9,8]],3]
-
-var arrs = flatten(arr)
-console.log(arrs)
-
-
-
-
-
-
-
-
 /* $.map = function (elements, callback) {
     var value, values = [], i, key
     if (likeArray(elements))

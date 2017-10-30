@@ -242,21 +242,51 @@ zepto1.16源码阅读
 
 
 -  `flatten`数组扁平化      
-> 利用`[].concat.apply([],array) 方法`    
+> 单层利用`[].concat.apply([],array) 方法`    
 > *此处只能用`apply()`不可使用`call()`方法*    
 > [*`apply()`方法接收一个包含多个参数的**数组***](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Function/apply)    
 ```js
-	// 单层
-	function flatten(array) { 
+	// 单层展开
+	function flattenS(array) { 
 		let arr
-		if(array.length > 0){
-			arr = [].concat.apply([],array)
-		}else {
-			arr = array
-		}
+		if(array.length > 0) arr = [].concat.apply([],array)
+		else arr = array
 		return arr
 	}
-	
+
+	// 多层展开
+	function flattenM(array,flatArr) { 
+    	flatArr = flatArr || []
+		if(array.length > 0){
+			for(let i=0; i<array.length; i++){
+				if(Array.isArray(array[i])) flattenM(array[i],flatArr)
+				else  flatArr.push(array[i])
+			}
+		}
+		return flatArr
+	}
+	let arr = [1,2,['a','b',[9,8]],3]
+	flattenS(arr)		// [1, 2, "a", "b", Array(2), 3]	// 展开单层
+	flattenM(arr)		// [1, 2, "a", "b", 9, 8, 3]		// 全部展开
+```
+
+- `$.map(collection,function(){})``遍历collection` 返回`function`处理后的结果(单层`Array`形式)
+```js
+	var map = function(elements,callback){
+		let values=[]
+		for(let key in elements){
+			let  value = callback(elements[key], key)
+			if(value != null) values.push(value)
+		}
+		return values	//未展开
+	}
+	let arr = [1,2,3,4,5],
+		compare = function(val){
+			if(val > 3)	return val*val
+			return val
+		}
+
+	map(arr,compare)	// [1, 2, 3, 16, 25]
 ```
 
 
