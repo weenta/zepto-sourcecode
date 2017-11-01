@@ -289,4 +289,16 @@ zepto1.16源码阅读
 	map(arr,compare)	// [1, 2, 3, 16, 25]
 ```
 
+- `$.trim` 去除首尾空格/空白符
+> [`String.prototype.trim.call()`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/String/Trim)
 
+
+- `add(selector, [context])`
+> 添加元素到当前匹配的元素集合中 
+什么情况下用?
+
+
+- `addClass(name)`	
+```js
+	
+```

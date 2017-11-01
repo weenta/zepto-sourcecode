@@ -7,24 +7,27 @@
 		h1 {font-size: 22px;}
 		h2 {font-size: 18px;}
 
-		.blue {
+		.blue,
+		.new-name {
 			color: blue;
+		}
+		.wrapper {
+			border: 1px solid blue;
 		}
 	</style>
 
 </head>
 <body>
 	<h1 id="title">Zepto.js-sourceCode</h1>
-	<div class='wrapper'>
-		<span>test1</span>
-		<span>test2</span>
-		<span>test3</span>
-	</div>
+	<button>添加</button>
+	<br>
 	<div>
-		<p>hello zepto!</p>
+		<div class='wrapper'>
+		</div>
 	</div>
+	<p>hello zepto!</p>
 	<h2>item-list</h2>
-	<ul id="list">
+	<ul id="list" class="list">
 		<li class="item item1">item1</li>
 		<li class="item">item2</li>
 		<li class="item">item3</li>
@@ -33,8 +36,12 @@
 			<span>content</span>
 		</li>
 	</ul>
-<!-- <script src="https://cdn.bootcss.com/zepto/1.1.6/zepto.min.js"></script> -->
+	<!-- <script type="text/javascript" src='./02zepto1.16-all.js'></script> -->
 <script type="text/javascript" src='./01zepto1.16-core.js'></script>
 <script type="text/javascript" src='./96index.js'></script>
+<script>
+	$('ul').addClass('new-name')
+
+</script>
 </body>
 </html>

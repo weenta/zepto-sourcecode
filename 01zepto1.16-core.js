@@ -94,7 +94,11 @@ var Zepto = (function () {
             .replace(/_/g, '-')
             .toLowerCase()
     }
-    uniq = function (array) { return filter.call(array, function (item, idx) { return array.indexOf(item) == idx }) }
+    uniq = function (array) { 
+        console.log('this')
+        console.log(this)
+        return filter.call(array, function (item, idx) { return array.indexOf(item) == idx }) 
+    }
 
     function classRE(name) {
         return name in classCache ?
@@ -602,7 +606,9 @@ var Zepto = (function () {
                 return zepto.matches(element, selector)
             }))
         },
+        // 添加
         add: function (selector, context) {
+            
             return $(uniq(this.concat($(selector, context))))
         },
         is: function (selector) {
@@ -910,16 +916,32 @@ var Zepto = (function () {
             }, classRE(name))
         },
         addClass: function (name) {
+            console.log(name)
+            console.log(this)
             if (!name) return this
-            return this.each(function (idx) {
-                if (!('className' in this)) return
+            console.log(this.each)
+            console.log($.each)
+            console.log(this.each == $.each)
+           
+            var addClassResult = this.each(function (idx) {
+                // 如果this是DOM节点 则ssa为false
+                // 只有DOM节点才有`ClassName`属性
+                var ssa = !('className' in this)
+                if (ssa) return
                 classList = []
+                // cls是当前node的class
+                // newName 是需要添加的新class
                 var cls = className(this), newName = funcArg(this, name, idx, cls)
+                // 将new-name 转换成数组 
+                console.log(newName.split(/\s+/g))
                 newName.split(/\s+/g).forEach(function (klass) {
-                    if (!$(this).hasClass(klass)) classList.push(klass)
+                    var sss = $(this).hasClass(klass)
+                    if (!sss) classList.push(klass)
                 }, this)
                 classList.length && className(this, cls + (cls ? " " : "") + classList.join(" "))
             })
+
+            return addClassResult
         },
         removeClass: function (name) {
             return this.each(function (idx) {
