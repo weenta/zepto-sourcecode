@@ -298,7 +298,31 @@ zepto1.16源码阅读
 什么情况下用?
 
 
-- `addClass(name)`	
+- `addClass(name)` 实现原理	
 ```js
-	
-```
+	var u = document.getElementsByTagName('ul')[0];
+
+	var fn = {
+		setClassName: function(node,value){
+			var clsName = node.className
+			if(value === undefined) return clsName
+			node.className = value
+		},
+		
+		addClass: function(name){
+			let clsNames = []
+			let clsName = this.setClassName(this);
+			clsNames.push(clsName)
+			var newName = name.split(/\s+/g);
+			newName.forEach((e)=>{
+				clsNames.push(e)
+			});
+			let clsNamesStr = clsNames.join(' ');
+			return this.setClassName(this,clsNamesStr)
+		}
+	}
+
+	u.__proto__.addClass = fn.addClass;
+	u.__proto__.setClassName = fn.setClassName;
+
+	u.addClass('fir-name sec-name')

@@ -1,3 +1,5 @@
+{
+
 addClass: function (name) {
     if (!name) return this  // this指向调用该函数的对象
     return this.each(function (idx) {
@@ -29,27 +31,29 @@ function funcArg(context, arg, idx, payload) {
     return isFunction(arg) ? arg.call(context, idx, payload) : arg
 }
 
-// 判断是否已存在className
+// 判断DOM上是否已存在相同的className
 hasClass: function (name) {
     if (!name) return false
     return emptyArray.some.call(this, function (el) {
+        // 此处this指向classRE返回的正则
         return this.test(className(el))
     }, classRE(name))
 }
 
 // var classCache = {}
+// classRE 返回一个正则
 function classRE(name) {
     return name in classCache ?
         classCache[name] : (classCache[name] = new RegExp('(^|\\s)' + name + '(\\s|$)'))
-}
+};
 
 
-each: function (callback) {
+each: function(callback) {
     emptyArray.every.call(this, function (el, idx) {
         return callback.call(el, idx, el) !== false
     })
     return this
-},
+};
 
 $.each = function (elements, callback) {
     var i, key
@@ -81,3 +85,5 @@ checkName('abc ')    // true
 checkName(' abc ')    // true
 checkName(' abc    ')    // true
 checkName(' ab c')    // false
+
+}

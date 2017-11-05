@@ -911,37 +911,26 @@ var Zepto = (function () {
         },
         hasClass: function (name) {
             if (!name) return false
+
             return emptyArray.some.call(this, function (el) {
-                return this.test(className(el))
+                console.log(this)   // this指向classRE返回的正则
+                let cls = className(el)
+                let rescls = this.test(cls)
+                return rescls
             }, classRE(name))
         },
         addClass: function (name) {
-            console.log(name)
-            console.log(this)
             if (!name) return this
-            console.log(this.each)
-            console.log($.each)
-            console.log(this.each == $.each)
-           
-            var addClassResult = this.each(function (idx) {
-                // 如果this是DOM节点 则ssa为false
-                // 只有DOM节点才有`ClassName`属性
-                var ssa = !('className' in this)
-                if (ssa) return
-                classList = []
-                // cls是当前node的class
-                // newName 是需要添加的新class
-                var cls = className(this), newName = funcArg(this, name, idx, cls)
-                // 将new-name 转换成数组 
-                console.log(newName.split(/\s+/g))
-                newName.split(/\s+/g).forEach(function (klass) {
-                    var sss = $(this).hasClass(klass)
-                    if (!sss) classList.push(klass)
-                }, this)
-                classList.length && className(this, cls + (cls ? " " : "") + classList.join(" "))
+            let result = this.each(function(idx){
+              if (!('className' in this)) return
+              classList = []
+              var cls = className(this), newName = funcArg(this, name, idx, cls)
+              newName.split(/\s+/g).forEach(function(klass){
+                if (!$(this).hasClass(klass)) classList.push(klass)
+              }, this)
+              classList.length && className(this, cls + (cls ? " " : "") + classList.join(" "))
             })
-
-            return addClassResult
+            return result
         },
         removeClass: function (name) {
             return this.each(function (idx) {
