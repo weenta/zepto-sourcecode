@@ -13,8 +13,12 @@
 		.sec-name {
 			color: red;
 		}
+		.pwd2,
 		.wrapper {
-			border: 1px solid blue;
+			border: 2px solid blue;
+		}
+		.pwd {
+			border: 2px solid red;
 		}
 	</style>
 
@@ -35,16 +39,21 @@
 		<li class="item">item3</li>
 		<li class="item">item4</li>
 		<li>
-			<span>content</span>
+			<span>li-span</span>
 		</li>
 	</ul>
+	<div>
+		<input type="password" placeholder="密码" class="pwd">
+		<input type="text" placeholder="用户名">
+		<span class="blue">div-span</span>
+	</div>
 	<!-- <script type="text/javascript" src='./02zepto1.16-all.js'></script> -->
-<!-- <script type="text/javascript" src='./01zepto1.16-core.js'></script> -->
+<script type="text/javascript" src='./01zepto1.16-core.js'></script>
 <script type="text/javascript" src='./96index.js'></script>
 <script>
-	// $('ul').addClass('sec-name')
-	
-
+	var spa = $('div input');
+	// var attr = spa.attr('class','pwd2')
+	console.log(attr)
 </script>
 </body>
 </html>

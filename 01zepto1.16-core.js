@@ -355,8 +355,8 @@ var Zepto = (function () {
                     }
                 }else {
                     // 否则
-                    // 什么情况下会用到??
-                    console.log('使用querySelectorAll的情况')
+                    // 什么情况下会用到??(after)
+                    // console.log('使用querySelectorAll的情况')
                     cls = element.querySelectorAll(selector)
                 }
                 // 将结果转化为数组
@@ -807,6 +807,8 @@ var Zepto = (function () {
         },
         // 读取或设置dom的属性。
         attr: function (name, value) {
+            // console.log(this)
+            console.log(this[0].getAttribute(name))
             var result
             return (typeof name == 'string' && !(1 in arguments)) ?
                 (!this.length || this[0].nodeType !== 1 ? undefined :
@@ -1033,15 +1035,19 @@ var Zepto = (function () {
 
     // Generate the `after`, `prepend`, `before`, `append`,
     // `insertAfter`, `insertBefore`, `appendTo`, and `prependTo` methods.
+    // adjacencyOperators = ['after', 'prepend', 'before', 'append']
     adjacencyOperators.forEach(function (operator, operatorIndex) {
         var inside = operatorIndex % 2 //=> prepend, append
 
         $.fn[operator] = function () {
             // arguments can be nodes, arrays of nodes, Zepto objects and HTML strings
-            var argType, nodes = $.map(arguments, function (arg) {
+            var argType, 
+            nodes = $.map(arguments, function (arg) {
                 argType = type(arg)
+                let zeptFrag = zepto.fragment(arg)
                 return argType == "object" || argType == "array" || arg == null ?
-                    arg : zepto.fragment(arg)
+                    arg : zeptFrag
+                    
             }),
                 parent, copyByClone = this.length > 1
             if (nodes.length < 1) return this

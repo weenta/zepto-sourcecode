@@ -139,16 +139,18 @@ zepto1.16源码阅读
 	// und:  undefined
 ```
 
--  `Object.getPrototypeOf()`	    
+-  `Object.getPrototypeOf()`相当于`obj.__proto__`      
 > 方法返回指定对象的原型（内部[[Prototype]]属性的值)    
 可用于判断`Object/Array`类型   
 ```js
 	var obj = { a: 1},
 		arr = [1,2]
-	
+	obj.__proto__ === Object.prototype					// true
 	Object.getPrototypeOf(obj) === Object.prototype 	// true
 	Object.getPrototypeOf(arr) === Object.prototype  	// false
 	Object.getPrototypeOf(arr) === Array.prototype 		// true
+	arr.__proto__ === Array.prototype 					// true
+	arr.__proto__ === Object.prototype 					// false
 	Object.getPrototypeOf(arr).__proto__ === Object.prototype		// true
 
 	// 检测是否是`Array`一般不用这么麻烦 直接使用 Array.isArray(obj)方法即可
@@ -298,7 +300,7 @@ zepto1.16源码阅读
 什么情况下用?
 
 
-- `addClass(name)` 实现原理	
+- `addClass(name)` 实现原理	    
 ```js
 	var u = document.getElementsByTagName('ul')[0];
 
@@ -326,3 +328,44 @@ zepto1.16源码阅读
 	u.__proto__.setClassName = fn.setClassName;
 
 	u.addClass('fir-name sec-name')
+```
+
+- `Function`的`arguments`参数
+> 类数组 实际是`object`
+```js
+	function fn(arg1,arg2){
+		// Object.getPrototypeOf(arguments) === Object.prototype
+		console.log(arguments.__proto__ === Object.prototype)		// true
+		console.log(arguments.__proto__ === Array.prototype)		// false
+
+		// 判断arg2是否传值
+		console.log(1 in arguments)		// true: arg2传值(即使值为null,undefined,''); false: arg2未传值 
+	}
+
+	fn('a','c')			// true false true
+	fn('a')		   		// true false false
+	fn('a',null) 		// true false true	
+	fn('a',undefined) 	// true false true	
+	fn('a','') 			// true false true	
+```
+
+
+- `attr`函数
+```js
+	var fn = {
+		attr: function(name,value){
+			if(!arguments[1]){
+				if(typeof(name) !== 'string' || this.length==0 || this[0].nodeType !== 1 || !(name in this[0])) return null
+				return this[0].getAttribute(name)
+			}
+			else {
+				if(typeof(name) !== 'string' || this.length==0 || this[0].nodeType !== 1) return null
+				return this[0].setAttribute(name,value)
+			}
+		}
+	}
+
+	var node = document.getElementsByTagName('input')
+	node.__proto__.attr = fn.attr
+	node.attr('type')
+	node.attr('type','tel')
