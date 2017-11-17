@@ -5,7 +5,7 @@
 	<title>zepto-sourcecode</title>
 	<style type="text/css">
 		h1 {font-size: 22px;}
-		h2 {font-size: 18px;}
+		h2 {font-size: 18px; color:red;font-weight: 500;}
 
 		.fir-name {
 			background-color:aqua;
@@ -27,12 +27,10 @@
 	<h1 id="title" class="title">Zepto.js-sourceCode</h1>
 	<button>添加</button>
 	<br>
-	<div>
-		<div class='wrapper'>
-		</div>
+	<div id="greet" class="greet">
+		<p>hello zepto!</p>
 	</div>
-	<p>hello zepto!</p>
-	<h2>item-list</h2>
+	<h2 style="padding-top:10px">item-list</h2>
 	<ul id="list" class="list">
 		<li class="item item1">item1</li>
 		<li class="item">item2</li>
@@ -42,7 +40,7 @@
 			<span>li-span</span>
 		</li>
 	</ul>
-	<div>
+	<div class="input-wrapper">
 		<input type="password" placeholder="密码" class="pwd">
 		<input type="text" placeholder="用户名">
 		<span class="blue">div-span</span>
@@ -51,9 +49,8 @@
 <script type="text/javascript" src='./01zepto1.16-core.js'></script>
 <script type="text/javascript" src='./96index.js'></script>
 <script>
-	var spa = $('div input');
-	// var attr = spa.attr('class','pwd2')
-	console.log(attr)
+	
+	
 </script>
 </body>
 </html>

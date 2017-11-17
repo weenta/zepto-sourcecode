@@ -123,6 +123,8 @@ var Zepto = (function () {
     }
 
     function children(element) {
+        console.log('out')
+        console.log('children' in element)
         return 'children' in element ?
             slice.call(element.children) :
             $.map(element.childNodes, function (node) { if (node.nodeType == 1) return node })
@@ -200,9 +202,8 @@ var Zepto = (function () {
         else if (isFunction(selector)) return $(document).ready(selector)
         // If a Zepto collection is given, just return it
         else if (zepto.isZ(selector)) {
-            console.log('isZ')
+            // console.log('isZ')
             return selector
-            console.log('return')
         }
         else {
             
@@ -711,6 +712,9 @@ var Zepto = (function () {
             return filtered(uniq(this.pluck('parentNode')), selector)
         },
         children: function (selector) {
+            console.log('in')
+            console.log(this)
+            console.log(children(this))
             return filtered(this.map(function () { return children(this) }), selector)
         },
         contents: function () {
@@ -881,8 +885,14 @@ var Zepto = (function () {
                 var computedStyle, element = this[0]
                 if (!element) return
                 computedStyle = getComputedStyle(element, '')
-                if (typeof property == 'string')
-                    return element.style[camelize(property)] || computedStyle.getPropertyValue(property)
+                if (typeof property == 'string'){
+                    let camel = camelize(property)
+                    var st = element.style[camel]
+                    var com = computedStyle.getPropertyValue(property)
+                    // return element.style[camelize(property)] || computedStyle.getPropertyValue(property)
+                    let res = st || com
+                    return res
+                }
                 else if (isArray(property)) {
                     var props = {}
                     $.each(property, function (_, prop) {

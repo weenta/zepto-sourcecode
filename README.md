@@ -369,3 +369,74 @@ zepto1.16源码阅读
 	node.__proto__.attr = fn.attr
 	node.attr('type')
 	node.attr('type','tel')
+```
+
+- `children` 
+```js
+	var list = document.getElementsByClassName('list')[0]
+	var nodes =[].slice.call(list.childNodes)
+	var children = []
+	nodes.forEach(e=>{
+		if(e.nodeType === 1){
+			children.push(e)
+		}
+	})
+	console.log(children)
+```	
+
+- `clone` 
+> [`Node.cloneNode() 方法返回调用该方法的节点的一个副本.`](https://developer.mozilla.org/zh-CN/docs/Web/API/Node/cloneNode)
+
+```js
+	var dupNode = node.cloneNode(deep);
+	//deep 可选 是否采用深度克隆,如果为true,则该节点的所有后代节点也都会被克隆,如果为false,则只克隆该节点本身.
+
+	list = document.getElementsByClassName('list')[0]
+	var cnode = list.cloneNode(true)
+	var u = document.createElement('ul')
+	u.appendChild(cnode)
+	document.body.appendChild(u)
+```
+
+- `camelize`     
+> `font-size` 转 `fontSize`写法
+```js
+	var camelize = function(str){
+		let regex = /-+(.)?/g
+		let replacer = function(match,chr){		// match为被匹配到的字符, chr 为RegExp.$1
+			return chr ? chr.toUpperCase() : ''
+		}
+		return str.replace(regex,replacer)	
+	}
+
+	camelize('font-size')  // fontSize
+	camelize('border-top-left-radius')  // borderTopLeftRadius
+```
+
+- `disCamelize` 
+> `fontSize`转`font-size`
+```js
+	var disCamelize = function(str){
+		var regex = /[A-Z]/g
+		var replacer = function(match){
+			return match ? '-'+ match.toLowerCase() : ''
+		}
+		return str.replace(regex,replacer)
+	}
+
+	disCamelize('fontSize')  				//font-size
+	disCamelize('borderTopLeftRadius')  	//border-top-left-radius
+```
+
+
+
+- `css`   
+	- 获取`CSSStyleDeclaration` 		   
+	> [`Window.getComputedStyle()`](https://developer.mozilla.org/zh-CN/docs/Web/API/Window/getComputedStyle)   
+
+	- 获取`CSSStyleDeclaration`的属性值    
+	> [`CSSStyleDeclaration.getPropertyValue()`](https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleDeclaration/getPropertyValue)
+	
+```js
+	
+```

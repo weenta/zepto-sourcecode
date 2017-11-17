@@ -1,20 +1,43 @@
-// 读取或设置dom的属性。
-var fn = {
-    attr: function (name, value) {
-        var result 
-                // name 是string         value未传值(即使传null 1 in arguments为true)
-        return (typeof name == 'string' && !(1 in arguments)) ?
-            // this.是$()返回的数组 nodetype == 1表示element元素
-            // 如果 this.length<0 或 this[0]不为element元素 return undefined
-            (!this.length || this[0].nodeType !== 1 ? undefined :
-                (!(result = this[0].getAttribute(name)) && name in this[0]) ? this[0][name] : result
-            ) :
-            // value 不为空
-            this.each(function (idx) {
-                if (this.nodeType !== 1) return
-                if (isObject(name)) for (key in name) setAttribute(this, key, name[key])
-                else setAttribute(this, name, funcArg(this, value, idx, this.getAttribute(name)))
-            })
+var camelize = function (str) { 
+    return str.replace(/-+(.)?/g, 
+    function (match, chr) { 
+        console.log(match,chr)
+        return chr ? chr.toUpperCase() : '' }) 
     }
-}
 
+   var camelize = function (str) { return str.replace(/-+(.)?/g, function (match, chr) { return chr ? chr.toUpperCase() : '' }) }
+
+{
+css: function (property, value) {
+    if (arguments.length < 2) {
+        var computedStyle, element = this[0]
+        if (!element) return
+        computedStyle = getComputedStyle(element, '')
+        if (typeof property == 'string')
+            return element.style[camelize(property)] || computedStyle.getPropertyValue(property)
+        else if (isArray(property)) {
+            var props = {}
+            $.each(property, function (_, prop) {
+                props[prop] = (element.style[camelize(prop)] || computedStyle.getPropertyValue(prop))
+            })
+            return props
+        }
+    }
+
+    var css = ''
+    if (type(property) == 'string') {
+        if (!value && value !== 0)
+            this.each(function () { this.style.removeProperty(dasherize(property)) })
+        else
+            css = dasherize(property) + ":" + maybeAddPx(property, value)
+    } else {
+        for (key in property)
+            if (!property[key] && property[key] !== 0)
+                this.each(function () { this.style.removeProperty(dasherize(key)) })
+            else
+                css += dasherize(key) + ':' + maybeAddPx(key, property[key]) + ';'
+    }
+
+    return this.each(function () { this.style.cssText += ';' + css })
+}
+}
